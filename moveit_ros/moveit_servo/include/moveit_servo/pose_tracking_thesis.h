@@ -96,6 +96,7 @@ struct RRMCConfig
 {
   double max_joint_velocity = M_PI; // 180 deg/s in rad/s (~3.14159)
   bool enable_joint_velocity_clamping = true; // proportionally scale down joint velocities if any joint exceeds max_joint_velocity
+  bool use_ADLS = true; // use Adaptive Damped Least Squares for Jacobian pseudo-inverse
   double min_singular_value = 0.2; // minimum singular value for the Jacobian to avoid singularities
   double max_damping = 0.04; // maximum damping factor for the Jacobian pseudo-inverse
   double alpha = 1.0;
@@ -222,7 +223,7 @@ private:
   control_msgs::msg::JointJog::ConstSharedPtr calculateJointCommand(const geometry_msgs::msg::TwistStamped& cmd);
 
   /** \brief Use PID controllers, task redundancy and utility functions to calculate a joint velocity command toward a pose */
-  control_msgs::msg::JointJog::ConstSharedPtr calculateOptimizedJointCommand(const geometry_msgs::msg::TwistStamped& cmd, const bool use_ADLS = true);
+  control_msgs::msg::JointJog::ConstSharedPtr calculateOptimizedJointCommand(const geometry_msgs::msg::TwistStamped& cmd);
 
   void removeTaskDimensions(Eigen::MatrixXd& matrix, Eigen::VectorXd& v);
 

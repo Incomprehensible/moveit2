@@ -687,7 +687,7 @@ Eigen::VectorXd PoseTracking::computeJointLimitGradient(
 
 // Resolved Rate Motion Control for joint space control
 control_msgs::msg::JointJog::ConstSharedPtr PoseTracking::calculateOptimizedJointCommand(
-    const geometry_msgs::msg::TwistStamped& cmd, const bool use_ADLS)
+    const geometry_msgs::msg::TwistStamped& cmd)
 {
   std::vector<size_t> active_rows = {};
   Eigen::MatrixXd pseudo_inverse;
@@ -734,7 +734,7 @@ control_msgs::msg::JointJog::ConstSharedPtr PoseTracking::calculateOptimizedJoin
   Eigen::JacobiSVD<Eigen::MatrixXd> svd =
       Eigen::JacobiSVD<Eigen::MatrixXd>(J_sliced, Eigen::ComputeThinU | Eigen::ComputeThinV);
   Eigen::VectorXd singular_values = svd.singularValues();
-  if (use_ADLS)
+  if (rrmc_config_.use_ADLS)
   {
     Eigen::VectorXd inv_singular_values(singular_values.size());
 
@@ -762,7 +762,7 @@ control_msgs::msg::JointJog::ConstSharedPtr PoseTracking::calculateOptimizedJoin
   Eigen::VectorXd qdot = pseudo_inverse * v;
 
   // near singularities qnull will have a small effect on the final joint velocity command
-  if (!use_ADLS)
+  if (!rrmc_config_.use_ADLS)
     qdot *= velocityScalingFactorForSingularity(joint_model_group_, v, svd, pseudo_inverse,
                                                       servo_parameters_->hard_stop_singularity_threshold,
                                                       servo_parameters_->lower_singularity_threshold,
