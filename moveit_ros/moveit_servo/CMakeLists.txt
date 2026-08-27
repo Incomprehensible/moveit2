@@ -13,7 +13,9 @@ set(SERVO_LIB_NAME moveit_servo_lib)
 set(SERVO_PARAM_LIB_NAME ${SERVO_LIB_NAME}_parameters)
 
 # Pose Tracking
-set(POSE_TRACKING pose_tracking)
+# set(POSE_TRACKING pose_tracking)
+# NAD
+set(POSE_TRACKING_THESIS pose_tracking)
 
 # Component Nodes (Shared libraries) ############################
 set(SERVO_COMPONENT_NODE servo_node)
@@ -83,9 +85,13 @@ set_target_properties(${SERVO_LIB_NAME} PROPERTIES VERSION "${${PROJECT_NAME}_VE
 ament_target_dependencies(${SERVO_LIB_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 target_link_libraries(${SERVO_LIB_NAME} ${SERVO_PARAM_LIB_NAME})
 
-add_library(${POSE_TRACKING} SHARED src/pose_tracking.cpp)
-ament_target_dependencies(${POSE_TRACKING} ${THIS_PACKAGE_INCLUDE_DEPENDS})
-target_link_libraries(${POSE_TRACKING} ${SERVO_LIB_NAME})
+# add_library(${POSE_TRACKING} SHARED src/pose_tracking.cpp)
+# ament_target_dependencies(${POSE_TRACKING} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+# target_link_libraries(${POSE_TRACKING} ${SERVO_LIB_NAME})
+
+add_library(${POSE_TRACKING_THESIS} SHARED src/pose_tracking_thesis.cpp)
+ament_target_dependencies(${POSE_TRACKING_THESIS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+target_link_libraries(${POSE_TRACKING_THESIS} ${SERVO_LIB_NAME})
 
 #####################
 ## Component Nodes ##
@@ -112,9 +118,9 @@ target_link_libraries(${SERVO_NODE_MAIN_NAME} ${SERVO_COMPONENT_NODE})
 ament_target_dependencies(${SERVO_NODE_MAIN_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # An example of pose tracking
-add_executable(${POSE_TRACKING_DEMO_NAME} src/cpp_interface_demo/pose_tracking_demo.cpp)
-target_link_libraries(${POSE_TRACKING_DEMO_NAME} ${POSE_TRACKING})
-ament_target_dependencies(${POSE_TRACKING_DEMO_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+# add_executable(${POSE_TRACKING_DEMO_NAME} src/cpp_interface_demo/pose_tracking_demo.cpp)
+# target_link_libraries(${POSE_TRACKING_DEMO_NAME} ${POSE_TRACKING})
+# ament_target_dependencies(${POSE_TRACKING_DEMO_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Add executable to publish fake servo commands for testing/demo purposes
 add_executable(${FAKE_SERVO_CMDS_NAME} test/publish_fake_jog_commands.cpp)
@@ -133,7 +139,8 @@ install(
   TARGETS
     ${SERVO_LIB_NAME}
     ${SERVO_LIB_NAME}_parameters
-    ${POSE_TRACKING}
+    # ${POSE_TRACKING}
+    ${POSE_TRACKING_THESIS}
     ${SERVO_COMPONENT_NODE}
     ${SERVO_CONTROLLER_INPUT}
   EXPORT export_${PROJECT_NAME}
@@ -148,7 +155,7 @@ install(
   TARGETS
     ${SERVO_NODE_MAIN_NAME}
     ${CPP_DEMO_NAME}
-    ${POSE_TRACKING_DEMO_NAME}
+    # ${POSE_TRACKING_DEMO_NAME}
     ${FAKE_SERVO_CMDS_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -201,12 +208,12 @@ if(BUILD_TESTING)
   add_ros_test(test/launch/test_servo_collision.test.py TIMEOUT 120 ARGS "test_binary_dir:=${CMAKE_CURRENT_BINARY_DIR}")
 
   # pose_tracking
-  ament_add_gtest_executable(test_servo_pose_tracking
-        test/pose_tracking_test.cpp
-  )
-  ament_target_dependencies(test_servo_pose_tracking ${THIS_PACKAGE_INCLUDE_DEPENDS})
-  target_link_libraries(test_servo_pose_tracking ${POSE_TRACKING})
-  add_ros_test(test/launch/test_servo_pose_tracking.test.py TIMEOUT 120 ARGS "test_binary_dir:=${CMAKE_CURRENT_BINARY_DIR}")
+  # ament_add_gtest_executable(test_servo_pose_tracking
+  #       test/pose_tracking_test.cpp
+  # )
+  # ament_target_dependencies(test_servo_pose_tracking ${THIS_PACKAGE_INCLUDE_DEPENDS})
+  # target_link_libraries(test_servo_pose_tracking ${POSE_TRACKING})
+  # add_ros_test(test/launch/test_servo_pose_tracking.test.py TIMEOUT 120 ARGS "test_binary_dir:=${CMAKE_CURRENT_BINARY_DIR}")
 
   # Unit tests
   ament_add_gtest(servo_calcs_unit_tests

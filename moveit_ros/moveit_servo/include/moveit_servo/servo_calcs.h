@@ -111,6 +111,23 @@ public:
   /** \brief Pause or unpause processing servo commands while keeping the timers alive */
   void setPaused(bool paused);
 
+    /**
+   * Checks a TwistStamped msg for valid (non-NaN) velocities
+   * @param cmd the desired twist servo command
+   * @return true if this represents a valid servo twist command, false otherwise
+   */
+  bool checkValidCommand(const geometry_msgs::msg::TwistStamped& cmd);
+
+    /**
+   * Remove the Jacobian row and the delta-x element of one Cartesian dimension, to take advantage of task redundancy
+   *
+   * @param matrix The Jacobian matrix.
+   * @param delta_x Vector of Cartesian delta commands, should be the same size as matrix.rows()
+   * @param row_to_remove Dimension that will be allowed to drift, e.g. row_to_remove = 2 allows z-translation drift.
+   */
+  void removeDimension(Eigen::MatrixXd& matrix, Eigen::VectorXd& delta_x, unsigned int row_to_remove) const;
+
+
 protected:
   /** \brief Run the main calculation loop */
   void mainCalcLoop();
@@ -131,19 +148,12 @@ protected:
   /** \brief Parse the incoming joint msg for the joints of our MoveGroup */
   void updateJoints();
 
-  /**
+    /**
    * Checks a JointJog msg for valid (non-NaN) velocities
    * @param cmd the desired joint servo command
    * @return true if this represents a valid joint servo command, false otherwise
    */
   bool checkValidCommand(const control_msgs::msg::JointJog& cmd);
-
-  /**
-   * Checks a TwistStamped msg for valid (non-NaN) velocities
-   * @param cmd the desired twist servo command
-   * @return true if this represents a valid servo twist command, false otherwise
-   */
-  bool checkValidCommand(const geometry_msgs::msg::TwistStamped& cmd);
 
   /** \brief If incoming velocity commands are from a unitless joystick, scale them to physical units.
    * Also, multiply by timestep to calculate a position change.
@@ -201,15 +211,6 @@ protected:
    * Satisfy Gazebo by stuffing multiple messages into one.
    */
   void insertRedundantPointsIntoTrajectory(trajectory_msgs::msg::JointTrajectory& joint_trajectory, int count) const;
-
-  /**
-   * Remove the Jacobian row and the delta-x element of one Cartesian dimension, to take advantage of task redundancy
-   *
-   * @param matrix The Jacobian matrix.
-   * @param delta_x Vector of Cartesian delta commands, should be the same size as matrix.rows()
-   * @param row_to_remove Dimension that will be allowed to drift, e.g. row_to_remove = 2 allows z-translation drift.
-   */
-  void removeDimension(Eigen::MatrixXd& matrix, Eigen::VectorXd& delta_x, unsigned int row_to_remove) const;
 
   /**
    * Removes all of the drift dimensions from the jacobian and delta-x element

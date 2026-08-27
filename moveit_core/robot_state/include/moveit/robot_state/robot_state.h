@@ -1189,6 +1189,16 @@ public:
     updateLinkTransforms();
     return static_cast<const RobotState*>(this)->getJacobian(group, reference_point_position);
   }
+  
+  // NAD
+  /** \brief Compute the partial derivative of a column of the Jacobian wrt a single joint.
+   * \param jacobian The Jacobian matrix
+   * \param column_index Column of the Jacobian to compute the partial derivative for
+   * \param joint_index Joint index to compute the partial derivative with respect to
+   * \return Partial derivative of a Jacobian column wrt a single joint
+   */
+  static Eigen::Matrix<double, 6, 1> getJacobianColumnPartialDerivative(const Eigen::MatrixXd& jacobian,
+                                                                        int column_index, int joint_index);
 
   /** \brief Given a twist for a particular link (\e tip), compute the corresponding velocity for every variable and
    * store it in \e qdot */

@@ -89,6 +89,8 @@ void CollisionCheck::run()
     return;
   }
 
+  const double scene_collision_proximity_threshold = (override_scene_proximity_) ? scene_collision_proximity_threshold_ : parameters_->scene_collision_proximity_threshold;
+
   // Update to the latest current state
   current_state_ = planning_scene_monitor_->getStateMonitor()->getCurrentState();
   current_state_->updateCollisionBodyTransforms();
@@ -122,7 +124,7 @@ void CollisionCheck::run()
     // If we are far from a collision, velocity_scale should be 1.
     // If we are very close to a collision, velocity_scale should be ~zero.
     // When scene_collision_proximity_threshold is breached, start decelerating exponentially.
-    if (scene_collision_distance_ < parameters_->scene_collision_proximity_threshold)
+    if (scene_collision_distance_ < scene_collision_proximity_threshold)
     {
       // velocity_scale = e ^ k * (collision_distance - threshold)
       // k = - ln(0.001) / collision_proximity_threshold
@@ -130,7 +132,7 @@ void CollisionCheck::run()
       // velocity_scale should equal 0.001 when collision_distance is at zero.
       velocity_scale_ = std::min(velocity_scale_,
                                  exp(scene_velocity_scale_coefficient_ *
-                                     (scene_collision_distance_ - parameters_->scene_collision_proximity_threshold)));
+                                     (scene_collision_distance_ - scene_collision_proximity_threshold)));
     }
 
     if (self_collision_distance_ < parameters_->self_collision_proximity_threshold)
@@ -152,6 +154,14 @@ void CollisionCheck::run()
 void CollisionCheck::setPaused(bool paused)
 {
   paused_ = paused;
+}
+
+void CollisionCheck::overrideSceneCollisionThreshold(const double proximity_threshold)
+{
+  if (proximity_threshold < 0.0)
+    return;
+  override_scene_proximity_ = true;
+  scene_collision_proximity_threshold_ = proximity_threshold;
 }
 
 }  // namespace moveit_servo

@@ -112,4 +112,21 @@ const ServoParameters::SharedConstPtr& Servo::getParameters() const
   return parameters_;
 }
 
+void Servo::removeDimension(Eigen::MatrixXd& matrix, Eigen::VectorXd& v, unsigned int row_to_remove) const
+{
+  servo_calcs_.removeDimension(matrix, v, row_to_remove);
+}
+
+bool Servo::checkValidCommand(const geometry_msgs::msg::TwistStamped& cmd)
+{
+  return servo_calcs_.checkValidCommand(cmd);
+}
+
+void Servo::overrideSceneCollisionThreshold(const double proximity_threshold)
+{
+  collision_checker_.setPaused(true);
+  collision_checker_.overrideSceneCollisionThreshold(proximity_threshold);
+  collision_checker_.setPaused(false);
+}
+
 }  // namespace moveit_servo

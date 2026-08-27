@@ -88,6 +88,11 @@ public:
   /** \brief Get the parameters used by servo node. */
   const ServoParameters::SharedConstPtr& getParameters() const;
 
+  // exposed methods of ServoCalcs for convenience of calculations outside of Servo class
+  void removeDimension(Eigen::MatrixXd& matrix, Eigen::VectorXd& v, unsigned int row_to_remove) const;
+  bool checkValidCommand(const geometry_msgs::msg::TwistStamped& cmd);
+  void overrideSceneCollisionThreshold(const double proximity_threshold);
+
   // Give test access to private/protected methods
   friend class ServoFixture;
 

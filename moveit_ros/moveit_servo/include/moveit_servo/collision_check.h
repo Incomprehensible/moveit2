@@ -76,6 +76,8 @@ public:
   /** \brief Pause or unpause processing servo commands while keeping the timers alive */
   void setPaused(bool paused);
 
+  void overrideSceneCollisionThreshold(const double proximity_threshold);
+
 private:
   /** \brief Run one iteration of collision checking */
   void run();
@@ -115,5 +117,8 @@ private:
 
   mutable std::mutex joint_state_mutex_;
   sensor_msgs::msg::JointState latest_joint_state_;
+
+  bool override_scene_proximity_ = false;
+  double scene_collision_proximity_threshold_;
 };
 }  // namespace moveit_servo
