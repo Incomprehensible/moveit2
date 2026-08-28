@@ -109,14 +109,14 @@ By dynamically relaxing unconstrained Cartesian task dimensions (functional task
 
 This framework is applicable to any 6-DoF manipulator with a MoveIt 2 configuration, and is designed to be **modular, extensible, and real-time capable**. It is **extendable** to arbitrary secondary or primary objectives (e.g. dynamic collision avoidance using integrated FCL library in MoveIt 2), and to redundant 7-DoF manipulators by removing the hardcoded 6-DoF constraints.
 
-Note: The existing redundant dimensions implementation of `humble` Moveit Servo was left unutilized.
+*Note: The existing redundant dimensions implementation of `humble` Moveit Servo was left unutilized*.
 
 > **Academic Context:** Developed as part of a Bachelor's thesis investigating dynamic task-space redundancy, real-time null-space posture optimization and singularity avoidance in MoveIt 2.
 
 ---
 
 ## Validation
-The implementation has been validated on a **URe manipulator** in simulation and on real hardware using **MoveIt 2 Servo** with a **ROS 2 Humble** environment. The controller successfully tracks a moving target while optimizing secondary objectives such as manipulability, kinematic isotropy, and joint limit avoidance in real-time, as well as avoiding singularities. While default `humble` implementation gets stuck in poorly conditioned configurations in Cartesian space control, the proposed RRMC controller maintains smooth and stable tracking performance.
+The implementation has been validated on a **UR7e manipulator** in simulation and on real hardware using **MoveIt 2 Servo** with a **ROS 2 Humble**, **Ubuntu 22.04** environment. The controller successfully tracks a moving target while optimizing secondary objectives such as manipulability, kinematic isotropy, and joint limit avoidance in real-time, as well as avoiding singularities. While default `humble` implementation gets stuck in poorly conditioned configurations in Cartesian space control, the proposed RRMC controller maintains smooth and stable tracking performance.
 
 ---
 
@@ -259,10 +259,10 @@ pose_tracker->setControlMode(moveit_servo::PoseTrackingControlMode::JOINT);
 ```cpp
 rrmc_config.dir_manipulability_w = 0.6;
 Eigen::Vector3d p = Eigen::Vector3d{
-  obj_goal_pose.pose.position.x,
-  obj_goal_pose.pose.position.y,
-  obj_goal_pose.pose.position.z,
-};
+  x,
+  y,
+  z,
+}; // vector from command frame pointing in a desired direction
 rrmc_config.p = p;
 rrmc_config.redundant_dims.x_rotation = false;
 rrmc_config.redundant_dims.y_rotation = false;
